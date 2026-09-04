@@ -2,7 +2,13 @@
 
 **An AI can order from this store, but every payment is schema-checked, bounded, and logged.**
 
-Built for the Razorpay Buildathon, Track 1: AI Growth & Agentic Commerce.
+
+<img width="1917" height="911" alt="image" src="https://github.com/user-attachments/assets/31613c75-3db7-4122-b3c4-d6baa48fd11c" />
+
+
+Built for the Razorpay Buildathon
+<br/>
+**Track 1: AI Growth & Agentic Commerce.**
 
 Letting a model spend real money is the hard part of agentic commerce. The usual demo hands an LLM a
 payment API and hopes the prompt holds. This one assumes it will not. The agent proposes; a
