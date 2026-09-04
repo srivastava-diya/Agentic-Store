@@ -91,7 +91,7 @@ function Slip({ outcome, catalog, onCancel }: { outcome: Outcome; catalog: Produ
                                 </span>
                             </div>
                             <div className="stage-note">{payment.reference ?? payment.reason}</div>
-                            {payment.actionUrl && (
+                            {payment.actionUrl && payment.status === "pending" && (
                                 <a className="pay-link" href={payment.actionUrl} target="_blank" rel="noreferrer">
                                     Complete this payment →
                                 </a>
@@ -114,7 +114,9 @@ function Slip({ outcome, catalog, onCancel }: { outcome: Outcome; catalog: Produ
 
             <div className="slip-foot">
                 <span>order {outcome.orderId.slice(0, 8)}</span>
-                <span>{!outcome.decision.allowed ? "no charge" : settled === "succeeded" ? "settled" : "awaiting payment"}</span>
+                <span>
+                    {!outcome.decision.allowed ? "no charge" : settled === "succeeded" ? "settled" : "awaiting payment"}
+                </span>
             </div>
         </div>
     );
