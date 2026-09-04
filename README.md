@@ -2,6 +2,8 @@
 
 **An AI can order from this store, but every payment is schema-checked, bounded, and logged.**
 
+[![CI](https://github.com/srivastava-diya/Agentic-Store/actions/workflows/ci.yml/badge.svg)](https://github.com/srivastava-diya/Agentic-Store/actions/workflows/ci.yml)
+
 
 <img width="1917" height="911" alt="image" src="https://github.com/user-attachments/assets/31613c75-3db7-4122-b3c4-d6baa48fd11c" />
 
