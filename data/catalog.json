@@ -1,0 +1,17 @@
+[
+  { "id": "prod_001", "name": "Wireless Mouse", "price": 799, "currency": "INR", "stock": 12, "category": "input", "icon": "🖱️" },
+  { "id": "prod_002", "name": "Mechanical Keyboard", "price": 3499, "currency": "INR", "stock": 5, "category": "input", "icon": "⌨️" },
+  { "id": "prod_003", "name": "USB-C Hub", "price": 1299, "currency": "INR", "stock": 0, "category": "connectivity", "icon": "🔌" },
+  { "id": "prod_004", "name": "27-inch 4K Monitor", "price": 24999, "currency": "INR", "stock": 3, "category": "display", "icon": "🖥️" },
+  { "id": "prod_005", "name": "Noise Cancelling Headphones", "price": 8999, "currency": "INR", "stock": 7, "category": "audio", "icon": "🎧" },
+  { "id": "prod_006", "name": "1080p Webcam", "price": 2499, "currency": "INR", "stock": 9, "category": "video", "icon": "📷" },
+  { "id": "prod_007", "name": "1TB NVMe SSD", "price": 6499, "currency": "INR", "stock": 4, "category": "storage", "icon": "💾" },
+  { "id": "prod_008", "name": "Braided USB-C Cable", "price": 349, "currency": "INR", "stock": 40, "category": "connectivity", "icon": "🧵" },
+  { "id": "prod_009", "name": "Large Desk Mat", "price": 899, "currency": "INR", "stock": 15, "category": "desk", "icon": "🟫" },
+  { "id": "prod_010", "name": "Aluminium Laptop Stand", "price": 1799, "currency": "INR", "stock": 11, "category": "desk", "icon": "📐" },
+  { "id": "prod_011", "name": "Condenser Microphone", "price": 4299, "currency": "INR", "stock": 2, "category": "audio", "icon": "🎙️" },
+  { "id": "prod_012", "name": "Warm LED Desk Lamp", "price": 1499, "currency": "INR", "stock": 8, "category": "desk", "icon": "💡" },
+  { "id": "prod_013", "name": "Wi-Fi 6 Router", "price": 5499, "currency": "INR", "stock": 6, "category": "connectivity", "icon": "📶" },
+  { "id": "prod_014", "name": "20000mAh Power Bank", "price": 2199, "currency": "INR", "stock": 0, "category": "power", "icon": "🔋" },
+  { "id": "prod_015", "name": "Ergonomic Vertical Mouse", "price": 1999, "currency": "INR", "stock": 10, "category": "input", "icon": "🖲️" }
+]

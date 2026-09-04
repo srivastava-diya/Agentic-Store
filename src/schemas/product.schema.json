@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "price",
+    "currency",
+    "stock"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^prod_[0-9]+$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "price": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "currency": {
+      "type": "string",
+      "enum": [
+        "INR"
+      ]
+    },
+    "stock": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "category": {
+      "type": "string",
+      "minLength": 1
+    },
+    "icon": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 8
+    }
+  },
+  "additionalProperties": false
+}
