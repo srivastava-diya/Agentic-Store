@@ -183,6 +183,34 @@ npm run web        # Vite dev server, for working on the frontend
 The ledger is append-only and never expires, so stock consumed by a settled order stays consumed.
 Run `reset` before a demo.
 
+## Deploy
+
+Deployed on Railway as a single service. [`railway.json`](railway.json) carries the build and start
+commands, so the only manual steps are a volume and the environment.
+
+- **Volume** — mount at `/data`. The ledger is the source of truth, so it needs to survive restarts.
+- **Replicas** — exactly one. Two instances would each hold their own in-memory inventory and append
+  to their own ledger, and the spend cap would count twice.
+
+Environment variables:
+
+```bash
+AUDIT_LOG_PATH=/data/audit-log.jsonl        # required: put the ledger on the volume
+PUBLIC_BASE_URL=https://<your-app>.up.railway.app   # required: Razorpay redirects here after payment
+RAZORPAY_KEY_ID=
+RAZORPAY_KEY_SECRET=
+GEMINI_API_KEY=
+GROQ_API_KEY=
+```
+
+`PORT` is supplied by Railway and read automatically. Without `PUBLIC_BASE_URL` the payment link's
+`callback_url` falls back to `localhost`, so the redirect after paying would point at the visitor's
+own machine.
+
+This design does not suit a serverless host. The ledger is a file and the writer is a single
+process, which is the trade this project makes deliberately: the audit trail is readable with `cat`
+and is the source of truth rather than a report generated after the fact.
+
 ## Layout
 
 ```
