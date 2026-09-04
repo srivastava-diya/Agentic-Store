@@ -20,6 +20,64 @@ prompt.
 
 ---
 
+## What this does
+
+**The gate**
+
+- Sits between the agent and the money as a pure function, not a prompt, so it cannot be argued with
+- Runs seven checks in a fixed order and stops at the first failure: shape, product, currency, stock, per-order cap, rolling spend cap
+- Accepts `unknown` and never throws, whatever the model emits: a bare string, an array, a prototype-pollution payload
+- Returns a machine-readable code plus a human-readable reason for every refusal, so callers can adapt instead of retrying blindly
+
+**The contract**
+
+- One 20-line JSON Schema is the single source of truth, read by four consumers: the gate's validator, Gemini's `parametersJsonSchema`, Groq's `function.parameters`, and the MCP tool's `inputSchema`
+- The shape the model is told to produce and the shape the server enforces cannot drift apart, because they are the same file
+- The proposal is two fields, `productId` and `quantity`. There is no price field, and `additionalProperties: false` means a model that invents one is rejected before any code reads it
+- Prices always come from the catalog, server-side
+- The agent is never told the budget, the caps or the stock rules, so it cannot leak them, be talked out of them, or forget them under a long context
+
+**The ledger**
+
+- Append-only JSONL that records every proposal, refusal and charge
+- The decision is written *before* any charge is attempted, so a crash leaves a visible, recoverable record rather than money moved with no trace
+- Spend and stock are derived by folding the ledger, not stored beside it, so the audit trail is the source of truth and not a report generated afterwards
+- Folds a multi-line order into one row before summing, so a single order counts once against the budget
+- The rolling hourly window drains itself: nothing expires anything, older rows simply stop counting
+
+**Stock and money**
+
+- Two-phase reserve and commit, so an approved but unpaid order is neither sellable twice nor lost when a card is declined
+- Pending payment links hold both their stock and their budget until they settle or are abandoned
+- Idempotency keys replay a prior outcome instead of charging twice, checked locally and passed to the provider
+- Stock is rebuilt from the ledger at startup, so separate processes (web server, MCP server) stay consistent
+- Settlement polls open payment links and reconciles them; abandoning one releases its stock and frees its budget
+
+**Payments**
+
+- Razorpay test-mode payment links with a callback back into the store, plus poll and cancel
+- Stripe and an offline mock behind the same four-method interface, resolved by whichever keys are present
+- Runs end to end with no keys and no network at all, which is what makes the demos portable
+
+**Agents**
+
+- Gemini, falling back to Groq, falling back to a deterministic keyword matcher
+- A rate limit degrades the demo instead of ending it, and the store still works with zero API keys
+- Reports which agent actually decided, not which one was configured
+
+**Three ways in, one set of rules**
+
+- A React storefront with an order desk, a shop and a live ledger view
+- An HTTP API that returns **422 with the full decision** on a refusal, because a refusal is a valid answer and not a server error
+- An MCP server exposing `search_catalog`, `place_order` and `read_audit_log` over stdio, so any AI assistant shops under exactly the same rules
+- Node demo scripts that show the rules with no browser involved
+
+**Quality**
+
+- 30 Vitest cases over the rules, the ledger fold, the rolling window and the full order path
+- Proves the things that matter: a blocked order never reaches the payment provider, a declined card releases its reservation, a repeated key never charges twice
+- oxlint and a strict TypeScript config, both run by a single `npm run check`
+
 ## Run it
 
 ```bash
