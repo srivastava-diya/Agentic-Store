@@ -1,0 +1,63 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc", "promise", "import", "react"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "perf": "warn"
+  },
+  "env": {
+    "builtin": true,
+    "es2024": true,
+    "node": true
+  },
+  "ignorePatterns": ["dist", "web/dist", "node_modules", "data"],
+  "rules": {
+    // The demos and the MCP server report their verdicts on stdout.
+    "no-console": "off",
+    "eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+    "promise/no-return-wrap": "error",
+    "typescript/no-explicit-any": "error",
+    "typescript/consistent-type-imports": "error",
+
+    // Express 5 forwards a rejected promise from an async handler to next()
+    // on its own, so the wrapper this rule asks for is not needed here.
+    "oxc/no-async-endpoint-handlers": "off",
+    // The order, settle and demo loops are sequential on purpose: each
+    // iteration's verdict depends on the spend the previous one committed to
+    // the ledger. Promise.all would change the result, not just the speed.
+    "eslint/no-await-in-loop": "off",
+    // Spreading a product to copy it before adjusting stock is deliberate.
+    "oxc/no-map-spread": "off",
+    // Small helper closures are kept beside their only caller on purpose.
+    "unicorn/consistent-function-scoping": "off",
+    // `import Stripe from "stripe"` is the vendor's documented usage.
+    "import/no-named-as-default": "off"
+  },
+  "overrides": [
+    {
+      "files": ["web/src/**/*.{ts,tsx}"],
+      "env": { "browser": true },
+      "rules": {
+        "react/rules-of-hooks": "error",
+        // React 19's automatic JSX runtime needs no React import.
+        "react/react-in-jsx-scope": "off",
+        // These three fire on the fetch-on-mount, scroll-on-new-turn and
+        // useCallback code in App.tsx. Each was reviewed and is intentional.
+        "react/set-state-in-effect": "off",
+        "react/exhaustive-effect-dependencies": "off",
+        "react/memo-dependencies": "off",
+        // `import "./index.css"` is how Vite loads styles.
+        "import/no-unassigned-import": "off"
+      }
+    },
+    {
+      "files": ["tests/**/*.ts"],
+      "plugins": ["vitest"],
+      "rules": {
+        "vitest/no-conditional-expect": "error",
+        "typescript/no-non-null-assertion": "off"
+      }
+    }
+  ]
+}
