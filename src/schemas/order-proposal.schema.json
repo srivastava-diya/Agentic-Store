@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "productId",
+    "quantity"
+  ],
+  "properties": {
+    "productId": {
+      "type": "string",
+      "pattern": "^prod_[0-9]+$"
+    },
+    "quantity": {
+      "type": "integer",
+      "minimum": 1
+    }
+  },
+  "additionalProperties": false
+}
