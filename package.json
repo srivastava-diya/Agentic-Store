@@ -1,0 +1,48 @@
+{
+  "name": "agentic-store",
+  "version": "1.0.0",
+  "description": "An AI can order from this store, but every payment is schema-checked, bounded, and logged.",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsx src/server.ts",
+    "dev": "tsx watch src/server.ts",
+    "web": "npm --prefix web run dev",
+    "web:build": "npm --prefix web run build",
+    "mcp": "tsx src/mcp-server.ts",
+    "mcp:smoke": "tsx src/mcp-smoke.ts",
+    "demo:gate": "tsx src/demo-gate.ts",
+    "demo:limits": "tsx src/demo-limits.ts",
+    "demo:llm": "tsx src/demo-llm.ts",
+    "settle": "tsx src/settle-job.ts",
+    "validate": "tsx src/validate.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "reset": "node -e \"require('fs').rmSync('data/audit-log.jsonl',{force:true})\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "oxlint src tests web/src",
+    "lint:fix": "oxlint src tests web/src --fix",
+    "check": "npm run lint && npm run typecheck && npm test"
+  },
+  "keywords": [],
+  "type": "module",
+  "author": "Diya Srivastava",
+  "license": "ISC",
+  "dependencies": {
+    "@google/genai": "^2.21.0",
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "ajv": "^8.20.0",
+    "express": "^5.2.1",
+    "razorpay": "^2.9.8",
+    "stripe": "^22.6.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.12",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.4.1",
+    "oxlint": "^1.81.0",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.0"
+  }
+}
