@@ -45,7 +45,7 @@ app.get("/api/config", (_req, res) => {
 
 app.get("/return", async (_req, res) => {
     await settlePending(inventory, payment);
-    res.redirect("/?settled=1");
+    res.redirect("/?settled=1#/desk");
 });
 
 app.post("/api/orders/:orderId/cancel", async (req, res) => {

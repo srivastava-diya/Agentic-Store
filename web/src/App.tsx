@@ -115,7 +115,7 @@ function Slip({ outcome, catalog, onCancel }: { outcome: Outcome; catalog: Produ
             <div className="slip-foot">
                 <span>order {outcome.orderId.slice(0, 8)}</span>
                 <span>
-                    {!outcome.decision.allowed ? "no charge" : settled === "succeeded" ? "settled" : "awaiting payment"}
+                    {!outcome.decision.allowed ? "no charge" : settled === "succeeded" ? "settled" : settled === "failed" ? "not charged, stock released" : "awaiting payment"}
                 </span>
             </div>
         </div>
@@ -231,17 +231,98 @@ function Ledger({ entries, catalog, onCancel }: { entries: AuditEntry[]; catalog
     );
 }
 
-type Route = "desk" | "shop" | "ledger";
+const PILLARS: Array<{ n: string; title: string; body: string }> = [
+    {
+        n: "01",
+        title: "The gate is code, not a prompt",
+        body: "Seven checks run in a fixed order between every AI order and any money: shape, product, currency, stock, a per-order cap and a rolling hourly cap. It is a plain function, so the agent cannot see it, argue with it, or be talked past it. And the agent is never told the limits, so there is no number for a prompt injection to reach.",
+    },
+    {
+        n: "02",
+        title: "The agent cannot name a price",
+        body: "The only thing an AI may send this store is a product id and a quantity. There is no price field in the contract, so an order that invents one is thrown out before a single field is read. Prices come from the catalog, server side, always.",
+    },
+    {
+        n: "03",
+        title: "The ledger is written before the money moves",
+        body: "Every proposal, refusal and charge is appended to an audit log before the payment provider is called. Stock and spend are not stored anywhere else, they are derived from that log. The audit trail is the source of truth, not a report generated afterwards.",
+    },
+    {
+        n: "04",
+        title: "Any AI buyer, one set of rules",
+        body: "The store is also an MCP server, so any AI assistant can shop here directly and meets the same gate as the storefront. The tool it calls is described by the same schema file the gate enforces, so what an agent is told and what the store allows can never drift apart.",
+    },
+];
 
-const ROUTES: Array<{ id: Route; label: string }> = [
+function Landing({ config, onStart }: { config: Config | null; onStart: () => void }) {
+    return (
+        <div className="scroll-page landing">
+            <div className="sheet-width">
+                <section className="hero">
+                    <h1>
+                        An AI can order from this store.
+                        <br />
+                        <em>Every payment is schema-checked, bounded, and logged.</em>
+                    </h1>
+                    <p>
+                        Letting a model spend real money is the hard part of agentic commerce. The usual
+                        approach hands an AI a payments API and hopes the prompt holds. This store assumes
+                        it will not. The agent proposes what to buy. A deterministic gate decides whether
+                        it is allowed. Only then does money move.
+                    </p>
+
+                    <div className="hero-actions">
+                        <button className="primary" onClick={onStart}>
+                            Try it now
+                        </button>
+                        {config && (
+                            <span className="hero-caps">
+                                live limits · {rupees(config.gate.maxOrderTotal)} per order ·{" "}
+                                {rupees(config.gate.maxSpendPerWindow)} per {config.spend.windowHours}h
+                            </span>
+                        )}
+                    </div>
+                </section>
+
+                <section className="pillars">
+                    {PILLARS.map((pillar) => (
+                        <article className="pillar" key={pillar.n}>
+                            <span className="pillar-n">{pillar.n}</span>
+                            <h3>{pillar.title}</h3>
+                            <p>{pillar.body}</p>
+                        </article>
+                    ))}
+                </section>
+
+                <section className="closing-line">
+                    <p>The agent proposes. The gate decides.</p>
+                    <button className="linkish start-link" onClick={onStart}>
+                        Open the order desk →
+                    </button>
+                </section>
+            </div>
+        </div>
+    );
+}
+
+type Route = "home" | "desk" | "shop" | "ledger";
+
+type NavRoute = Exclude<Route, "home">;
+
+const ROUTES: Array<{ id: NavRoute; label: string }> = [
     { id: "desk", label: "Order desk" },
     { id: "shop", label: "Shop" },
     { id: "ledger", label: "Ledger" },
 ];
 
+const ALL_ROUTES = new Set<Route>(["home", "desk", "shop", "ledger"]);
+
 const routeFromHash = (): Route => {
-    const id = window.location.hash.replace(/^#\/?/, "");
-    return ROUTES.some((route) => route.id === id) ? (id as Route) : "desk";
+    const id = window.location.hash.replace(/^#\/?/, "") as Route;
+    if (ALL_ROUTES.has(id)) {
+        return id;
+    }
+    return window.location.search.includes("settled") ? "desk" : "home";
 };
 
 function useRoute(): [Route, (route: Route) => void] {
@@ -273,9 +354,9 @@ function TopBar({
 }) {
     return (
         <header className="topbar">
-            <div className="brand">
+            <button className="brand" onClick={() => go("home")} title="Back to the front page">
                 Agentic <em>Store</em>
-            </div>
+            </button>
 
             <nav className="nav">
                 {ROUTES.map((entry) => (
@@ -464,6 +545,8 @@ export default function App() {
             />
 
             <div className="body">
+                {route === "home" && <Landing config={config} onStart={() => go("desk")} />}
+
                 {route === "desk" && (
                     <div className="desk">
                         <div className="transcript">
