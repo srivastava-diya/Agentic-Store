@@ -84,8 +84,11 @@ export const getAudit = () => json<AuditEntry[]>("/api/audit");
 export const askAgent = (description: string, quantity: number) =>
     post<Outcome>("/api/agent", { description, quantity });
 
-export const orderDirect = (productId: string, quantity: number) =>
-    post<Outcome>("/api/orders", { proposal: { productId, quantity } });
+export const orderDirect = async (productId: string, quantity: number) => {
+    const proposal = { productId, quantity };
+    const outcome = await post<Outcome>("/api/orders", { proposal });
+    return { ...outcome, proposal };
+};
 
 export const settle = () => post<{ settlements: unknown[] }>("/api/settle", {});
 
